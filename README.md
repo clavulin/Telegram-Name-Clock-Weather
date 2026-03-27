@@ -45,8 +45,8 @@ TG_STRING_SESSION=xxxxxxxxxxxxxxxx
 BASE_NAME=Alice
 TZ_NAME=Australia/Sydney
 
-QW_HOST=api.qweather.com
-QW_LOCATION=111.111
+QW_HOST=your-host.qweather.com
+QW_LOCATION=151.21,-33.87
 QW_JWT=xxxxxxxxxxxxxxxx
 ```
 
