@@ -16,7 +16,7 @@ It runs continuously and updates your Telegram name periodically using
 
 -   Automatic Telegram name updates
 -   Real-time clock display
--   Weather integration via **QWeather**
+-   Weather integration via **[QWeather](https://dev.qweather.com/en/)**
 -   Timezone support
 -   Minimal resource usage
 -   Easy deployment with **Docker**
@@ -138,6 +138,14 @@ You will receive:
 
     api_id
     api_hash
+
+------------------------------------------------------------------------
+
+# Getting Weather API
+
+This project uses QWeather for weather data.
+
+To get your weather API key, visit the [QWeather Developer Platform](https://dev.qweather.com/en/).
 
 ------------------------------------------------------------------------
 
