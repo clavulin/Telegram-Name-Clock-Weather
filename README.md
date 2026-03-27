@@ -46,7 +46,7 @@ BASE_NAME=Alice
 TZ_NAME=Australia/Sydney
 
 QW_HOST=api.qweather.com
-QW_LOCATION=151.21,-33.87
+QW_LOCATION=111.111
 QW_JWT=xxxxxxxxxxxxxxxx
 ```
 
@@ -65,8 +65,6 @@ docker run -d \
 # Docker Compose
 
 ``` yaml
-version: "3"
-
 services:
   telegram-name-clock-weather:
     image: ghcr.io/clavulin/telegram-name-clock-weather:latest
