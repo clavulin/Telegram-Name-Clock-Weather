@@ -38,16 +38,61 @@ docker pull ghcr.io/clavulin/telegram-name-clock-weather:latest
 Create a `.env` file:
 
 ``` env
+# Telegram API credentials
 TG_API_ID=123456
-TG_API_HASH=xxxxxxxxxxxxxxxx
-TG_STRING_SESSION=xxxxxxxxxxxxxxxx
+TG_API_HASH=abcdef123456abcdef123456abcdef12
 
+# Important: Pre-generated Telethon StringSession
+TG_STRING_SESSION=
+
+# Base name shown before the clock
 BASE_NAME=Alice
+
+# Timezone used for the clock
 TZ_NAME=Europe/London
 
+# Update interval in seconds
+# Recommended >= 60 (too frequent updates may trigger Telegram FloodWait)
+INTERVAL_SECONDS=60
+
+# Suffix format (default: {time})
+SUFFIX_FORMAT={time}
+
+# Polling frequency (seconds)
+# This only checks time changes and does NOT update the name every second
+POLL_SECONDS=1
+
+# Jump ahead to the next minute slightly earlier
+AHEAD_SECONDS=0.2
+
+# Scheduler safety margin
+# Values between 0.1 and 0.5 are usually safe
+GUARD_SECONDS=0.2
+
+# Enable weather display
+WEATHER_ENABLED=1
+
+# Weather refresh interval (seconds)
+# Default: 1800 seconds (30 minutes)
+WEATHER_REFRESH_SECONDS=1800
+
+# QWeather API host (without https://)
 QW_HOST=your-host.qweather.com
-QW_LOCATION=0.13,51.51
-QW_JWT=xxxxxxxxxxxxxxxx
+
+# Weather location (longitude,latitude) or LocationID
+# Example: London
+QW_LOCATION=0.1276,51.5072
+
+# Authentication (choose ONE)
+# Recommended: JWT
+QW_JWT=
+
+# Or API key
+# QW_API_KEY=your_api_key_here
+
+# Optional settings
+QW_LANG=en
+QW_UNIT=m
 ```
 
 Run the container:
