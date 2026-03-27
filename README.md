@@ -63,7 +63,7 @@ SUFFIX_FORMAT={time}
 POLL_SECONDS=1
 
 # Jump ahead to the next minute slightly earlier
-AHEAD_SECONDS=0.2
+AHEAD_SECONDS=0
 
 # Scheduler safety margin
 # Values between 0.1 and 0.5 are usually safe
