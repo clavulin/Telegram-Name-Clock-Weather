@@ -1,7 +1,0 @@
-services:
-  tg-name-clock:
-    build: .
-    container_name: tg-name-clock
-    restart: unless-stopped
-    env_file:
-      - .env
