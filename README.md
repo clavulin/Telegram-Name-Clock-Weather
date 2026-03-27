@@ -85,11 +85,11 @@ EOF"
 ```
 
 Steps:
-	1.	Run the command above
-	2.	Enter your API_ID
-	3.	Enter your API_HASH
-	4.	Enter your Telegram phone number
-	5.	Enter the verification code
+1.	Run the command above
+2.	Enter your API_ID
+3.	Enter your API_HASH
+4.	Enter your Telegram phone number
+5.	Enter the verification code
 
 You will get:
 TG_STRING_SESSION=xxxxxxxxxxxxxxxxxxxxxxxx
