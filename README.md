@@ -3,7 +3,7 @@
 [中文文档](README.zh-CN.md)
 
 ## Overview
-`tg-name-clock-docker` updates your Telegram first name with:
+`Telegram-Name-Clock-Weather` updates your Telegram first name with:
 - Base name
 - Current time (by timezone)
 - Current weather from QWeather
