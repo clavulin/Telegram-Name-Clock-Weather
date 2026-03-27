@@ -69,18 +69,32 @@ docker logs -f telegram-name-clock-weather
 ```
 
 ## Generate `TG_STRING_SESSION`
-Install Telethon locally and run:
-
-```python
+```bash
+docker run -it --rm python:3.11 bash -c "
+pip install telethon && \
+python - << 'EOF'
 from telethon.sync import TelegramClient
 from telethon.sessions import StringSession
 
-api_id = 123456
-api_hash = "your_api_hash"
+api_id = int(input('API_ID: '))
+api_hash = input('API_HASH: ')
 
 with TelegramClient(StringSession(), api_id, api_hash) as client:
-    print("TG_STRING_SESSION=" + client.session.save())
+    print('TG_STRING_SESSION=' + client.session.save())
+EOF"
 ```
+
+Steps:
+	1.	Run the command above
+	2.	Enter your API_ID
+	3.	Enter your API_HASH
+	4.	Enter your Telegram phone number
+	5.	Enter the verification code
+
+You will get:
+TG_STRING_SESSION=xxxxxxxxxxxxxxxxxxxxxxxx
+
+Copy it into your .env file.
 
 ## Environment Variables
 Required app variables used by current code:
