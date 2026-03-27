@@ -1,0 +1,7 @@
+services:
+  telegram-name-clock-weather:
+    image: ghcr.io/clavulin/telegram-name-clock-weather:latest
+    container_name: telegram-name-clock-weather
+    restart: unless-stopped
+    env_file:
+      - .env
