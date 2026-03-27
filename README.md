@@ -1,4 +1,4 @@
-# tg-name-clock-docker
+# Telegram Name Clock Weather
 
 [中文文档](README.zh-CN.md)
 
