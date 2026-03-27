@@ -6,7 +6,7 @@
 `Telegram Name Clock Weather` updates your Telegram first name with:
 - Base name
 - Current time (by timezone)
-- Current weather from QWeather
+- Current weather from [QWeather](https://dev.qweather.com)
 
 It runs continuously in Docker.
 
@@ -20,7 +20,7 @@ It runs continuously in Docker.
 ## Requirements
 - Docker + Docker Compose
 - Telegram `API_ID`, `API_HASH`, and `TG_STRING_SESSION`
-- QWeather dedicated host and location
+- [QWeather](https://dev.qweather.com) dedicated host and location
 
 ## Quick Start (GHCR Image via Docker Compose)
 1. Clone to local.
