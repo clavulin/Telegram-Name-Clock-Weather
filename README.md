@@ -127,19 +127,6 @@ docker compose up -d
 
 ------------------------------------------------------------------------
 
-# Environment Variables
-
-| Variable | Required | Example | Description |
-|---|---|---|---|
-| `TG_API_ID` | Yes | `123456` | Telegram API ID |
-| `TG_API_HASH` | Yes | `abcd1234...` | Telegram API Hash |
-| `TG_STRING_SESSION` | Yes | `1AQA...` | Telethon string session used for authentication |
-| `BASE_NAME` | Yes | `Alice` | Base name displayed before the time |
-| `TZ_NAME` | Yes | `Europe/London` | Timezone used for the clock |
-| `QW_HOST` | Yes | `your-host.qweather.com` | QWeather API host |
-| `QW_LOCATION` | Yes | `0.13,51.51` | Weather location in `longitude,latitude` |
-| `QW_JWT` | Yes | `eyJhbGciOiJIUzI1Ni...` | QWeather API JWT token |
-
 # Getting Telegram API Credentials
 
 1.  Go to https://my.telegram.org
