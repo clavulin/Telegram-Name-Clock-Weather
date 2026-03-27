@@ -23,7 +23,7 @@ It runs continuously and updates your Telegram name periodically using
 
 Example name format:
 
-    Alice 14:32 ☀️ 25°C
+    Alice 14:32 ☀️25°C
 
 ------------------------------------------------------------------------
 
