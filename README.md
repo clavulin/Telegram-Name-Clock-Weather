@@ -18,7 +18,7 @@ It runs continuously in Docker.
 - Prebuilt Docker image on GHCR
 
 ## Requirements
-- Docker + Docker Compose
+- Docker
 - Telegram `API_ID`, `API_HASH`, and `TG_STRING_SESSION`
 - [QWeather](https://dev.qweather.com) auth, dedicated host and location
 
