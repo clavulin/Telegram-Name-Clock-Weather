@@ -43,10 +43,10 @@ TG_API_HASH=xxxxxxxxxxxxxxxx
 TG_STRING_SESSION=xxxxxxxxxxxxxxxx
 
 BASE_NAME=Alice
-TZ_NAME=Australia/Sydney
+TZ_NAME=Europe/London
 
 QW_HOST=your-host.qweather.com
-QW_LOCATION=151.21,-33.87
+QW_LOCATION=0.13,51.51
 QW_JWT=xxxxxxxxxxxxxxxx
 ```
 
@@ -90,9 +90,9 @@ docker compose up -d
 | `TG_API_HASH` | Yes | `abcd1234...` | Telegram API Hash |
 | `TG_STRING_SESSION` | Yes | `1AQA...` | Telethon string session used for authentication |
 | `BASE_NAME` | Yes | `Alice` | Base name displayed before the time |
-| `TZ_NAME` | Yes | `Australia/Sydney` | Timezone used for the clock |
-| `QW_HOST` | Yes | `api.qweather.com` | QWeather API host |
-| `QW_LOCATION` | Yes | `151.21,-33.87` | Weather location in `longitude,latitude` |
+| `TZ_NAME` | Yes | `Europe/London` | Timezone used for the clock |
+| `QW_HOST` | Yes | `your-host.qweather.com` | QWeather API host |
+| `QW_LOCATION` | Yes | `0.13,51.51` | Weather location in `longitude,latitude` |
 | `QW_JWT` | Yes | `eyJhbGciOiJIUzI1Ni...` | QWeather API JWT token |
 
 # Getting Telegram API Credentials
