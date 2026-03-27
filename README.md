@@ -92,8 +92,9 @@ Steps:
 5.	Enter the verification code
 
 You will get:
+```bash
 TG_STRING_SESSION=xxxxxxxxxxxxxxxxxxxxxxxx
-
+```
 Copy it into your .env file.
 
 ## Environment Variables
