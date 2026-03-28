@@ -19,7 +19,7 @@ It runs continuously in Docker.
 
 Example name format:
 
-    Alice 14:32 ☀️ 25°C
+    Alice 14:32 ☀️25°C
 
 ## Requirements
 - Docker
