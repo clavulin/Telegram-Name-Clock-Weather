@@ -17,6 +17,10 @@
 - 通过 `.env` 简单配置
 - 提供 GHCR 预构建镜像
 
+效果展示：
+
+    Alice 14:32 ☀️ 25°C
+    
 ## 运行要求
 - Docker
 - Telegram `API_ID`、`API_HASH`、`TG_STRING_SESSION`
