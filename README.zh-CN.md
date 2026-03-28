@@ -20,7 +20,7 @@
 ## 运行要求
 - Docker
 - Telegram `API_ID`、`API_HASH`、`TG_STRING_SESSION`
-- [QWeather](https://dev.qweather.com/) 认证、专属 host 与位置参数
+- [QWeather](https://dev.qweather.com/) 鉴权、专属 host 与位置参数
 
 ## 快速开始（Docker Compose + GHCR 镜像）
 1. 克隆到本地。
