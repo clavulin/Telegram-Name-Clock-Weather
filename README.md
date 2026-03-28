@@ -17,6 +17,10 @@ It runs continuously in Docker.
 - Simple `.env`-driven configuration
 - Prebuilt Docker image on GHCR
 
+Example name format:
+
+    Alice 14:32 ☀️ 25°C
+
 ## Requirements
 - Docker
 - Telegram `API_ID`, `API_HASH`, and `TG_STRING_SESSION`
