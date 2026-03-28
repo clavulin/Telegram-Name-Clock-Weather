@@ -6,7 +6,7 @@
 `Telegram Name Clock Weather` 会持续更新 Telegram 的 first name，内容包括：
 - 基础昵称
 - 当前时间（按时区）
-- QWeather 实时天气
+- [QWeather](https://dev.qweather.com/) 实时天气
 
 项目通过 Docker 持续运行。
 
@@ -18,9 +18,9 @@
 - 提供 GHCR 预构建镜像
 
 ## 运行要求
-- Docker + Docker Compose
+- Docker
 - Telegram `API_ID`、`API_HASH`、`TG_STRING_SESSION`
-- QWeather 专属 host 与位置参数
+- [QWeather](https://dev.qweather.com/) 认证、专属 host 与位置参数
 
 ## 快速开始（Docker Compose + GHCR 镜像）
 1. 克隆到本地。
