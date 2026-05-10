@@ -13,7 +13,7 @@
 ## 功能
 - 按分钟更新昵称，支持调度提前量与安全余量
 - 支持 QWeather 动态 JWT（推荐）
-- 时间和温度可分别选择花体数字或普通数字
+- 时间和温度可分别选择多种 Unicode 数字/字母样式
 - 兼容静态 JWT 或 API Key
 - 通过 `.env` 简单配置
 - 提供 GHCR 预构建镜像
@@ -98,8 +98,8 @@ with TelegramClient(StringSession(), api_id, api_hash) as client:
 | `BASE_NAME` | 是 | 昵称基础文本 |
 | `TZ_NAME` | 否 | 时区，默认 `Australia/Sydney` |
 | `TIME_FORMAT` | 否 | 时间格式模板，默认 `{time}` |
-| `TIME_STYLE` | 否 | 时间数字样式：`fancy` 或 `normal`，默认 `fancy` |
-| `TEMP_STYLE` | 否 | 温度数字样式：`fancy` 或 `normal`，默认 `fancy` |
+| `TIME_STYLE` | 否 | 时间样式：`normal`、`bold`（兼容别名 `fancy`）、`italic`、`bold_italic`、`script`、`bold_script`、`fraktur`、`bold_fraktur`、`double_struck`、`sans`、`sans_italic`、`sans_bold`、`sans_bold_italic`、`monospace`；也接受 `sans-serif-bold`、`sans serif bold` 这类连字符/空格别名；不含数字字形的样式会自动保留普通数字 |
+| `TEMP_STYLE` | 否 | 温度样式：同 `TIME_STYLE`，作用于数字和 `C`，默认 `fancy` |
 | `AHEAD_SECONDS` | 否 | 提前量（秒） |
 | `GUARD_SECONDS` | 否 | 调度安全余量（秒） |
 | `WEATHER_ENABLED` | 否 | 天气开关，默认 `1` |
@@ -123,10 +123,10 @@ QWeather 鉴权三选一：
 方案 C：
 - `QW_API_KEY`
 
-数字样式示例：
+样式示例：
 - `TIME_STYLE=fancy` 且 `TEMP_STYLE=fancy`：`Alice 𝟏𝟑:𝟓𝟏 ☀️𝟐𝟎°𝐂`
-- `TIME_STYLE=normal` 且 `TEMP_STYLE=fancy`：`Alice 13:51 ☀️𝟐𝟎°𝐂`
-- `TIME_STYLE=fancy` 且 `TEMP_STYLE=normal`：`Alice 𝟏𝟑:𝟓𝟏 ☀️20°𝐂`
+- `TIME_STYLE=double_struck` 且 `TEMP_STYLE=double_struck`：`Alice 𝟙𝟛:𝟝𝟙 ☀️𝟚𝟘°ℂ`
+- `TIME_STYLE=sans_bold` 且 `TEMP_STYLE=fraktur`：`Alice 𝟭𝟯:𝟱𝟭 ☀️20°ℭ`
 
 ## 常见问题
 - `Need dynamic JWT envs ... or QW_JWT, or QW_API_KEY`

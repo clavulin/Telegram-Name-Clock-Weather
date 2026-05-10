@@ -2,6 +2,8 @@ import os
 import time
 import base64
 import json
+import string
+import unicodedata
 from datetime import datetime, timedelta
 from typing import Optional, Tuple
 
@@ -34,36 +36,159 @@ def smart_sleep(seconds: float):
     if seconds > 0:
         time.sleep(seconds)
 
-# --- Fancy number helpers ---
-FANCY_DIGITS = {
-    "0": "𝟎",
-    "1": "𝟏",
-    "2": "𝟐",
-    "3": "𝟑",
-    "4": "𝟒",
-    "5": "𝟓",
-    "6": "𝟔",
-    "7": "𝟕",
-    "8": "𝟖",
-    "9": "𝟗",
+# --- Unicode style helpers ---
+_UNICODE_DIGIT_NAMES = (
+    "ZERO",
+    "ONE",
+    "TWO",
+    "THREE",
+    "FOUR",
+    "FIVE",
+    "SIX",
+    "SEVEN",
+    "EIGHT",
+    "NINE",
+)
+
+_UNICODE_STYLE_NAMES = {
+    "bold": "BOLD",
+    "bold_italic": "BOLD ITALIC",
+    "bold_fraktur": "BOLD FRAKTUR",
+    "bold_script": "BOLD SCRIPT",
+    "double_struck": "DOUBLE-STRUCK",
+    "fraktur": "FRAKTUR",
+    "italic": "ITALIC",
+    "monospace": "MONOSPACE",
+    "sans": "SANS-SERIF",
+    "sans_bold": "SANS-SERIF BOLD",
+    "sans_bold_italic": "SANS-SERIF BOLD ITALIC",
+    "sans_italic": "SANS-SERIF ITALIC",
+    "script": "SCRIPT",
 }
 
-def to_fancy_number(text: str) -> str:
-    return "".join(FANCY_DIGITS.get(ch, ch) for ch in text)
+_UNICODE_STYLE_ALIASES = {
+    "bold": "bold",
+    "fancy": "bold",
+    "bold_italic": "bold_italic",
+    "bold_fraktur": "bold_fraktur",
+    "bold_script": "bold_script",
+    "double_struck": "double_struck",
+    "double-struck": "double_struck",
+    "double struck": "double_struck",
+    "fraktur": "fraktur",
+    "italic": "italic",
+    "mono": "monospace",
+    "monospace": "monospace",
+    "normal": "normal",
+    "plain": "normal",
+    "sans": "sans",
+    "sans_bold": "sans_bold",
+    "sans-bold": "sans_bold",
+    "sans_serif": "sans",
+    "sans-serif": "sans",
+    "sans serif": "sans",
+    "sans_serif_bold": "sans_bold",
+    "sans-serif-bold": "sans_bold",
+    "sans serif bold": "sans_bold",
+    "sans_bold_italic": "sans_bold_italic",
+    "sans-bold-italic": "sans_bold_italic",
+    "sans_serif_bold_italic": "sans_bold_italic",
+    "sans-serif-bold-italic": "sans_bold_italic",
+    "sans serif bold italic": "sans_bold_italic",
+    "sans_italic": "sans_italic",
+    "sans-italic": "sans_italic",
+    "sans_serif_italic": "sans_italic",
+    "sans-serif-italic": "sans_italic",
+    "sans serif italic": "sans_italic",
+    "script": "script",
+}
+
+_UNICODE_STYLE_LETTER_ALIASES = {
+    "double_struck": {
+        "C": "ℂ",
+        "H": "ℍ",
+        "N": "ℕ",
+        "P": "ℙ",
+        "Q": "ℚ",
+        "R": "ℝ",
+        "Z": "ℤ",
+    },
+    "fraktur": {
+        "C": "ℭ",
+        "H": "ℌ",
+        "I": "ℑ",
+        "R": "ℜ",
+        "Z": "ℨ",
+    },
+    "script": {
+        "B": "ℬ",
+        "E": "ℰ",
+        "F": "ℱ",
+        "H": "ℋ",
+        "I": "ℐ",
+        "L": "ℒ",
+        "M": "ℳ",
+        "R": "ℛ",
+    },
+}
 
 
-def normalize_digit_style(value: str, env_name: str) -> str:
-    style = (value or "fancy").strip().lower()
-    if style in ("fancy", "normal"):
+def _lookup_unicode_glyph(*names: str) -> Optional[str]:
+    for name in names:
+        try:
+            return unicodedata.lookup(name)
+        except KeyError:
+            continue
+    return None
+
+
+def normalize_unicode_style(value: str, env_name: str) -> str:
+    style = (value or "fancy").strip().lower().replace("-", "_").replace(" ", "_")
+    style = _UNICODE_STYLE_ALIASES.get(style, style)
+    if style == "normal" or style in _UNICODE_STYLE_NAMES:
         return style
-    print(f"[WARN] Invalid {env_name}={value!r}; using fancy")
-    return "fancy"
+    print(f"[WARN] Invalid {env_name}={value!r}; using bold")
+    return "bold"
 
 
-def format_digits(text: str, style: str) -> str:
+def _style_char(style: str, ch: str) -> Optional[str]:
+    if style == "normal" or len(ch) != 1 or not ch.isascii():
+        return None
+
+    style_name = _UNICODE_STYLE_NAMES[style]
+    if ch.isdigit():
+        digit_name = _UNICODE_DIGIT_NAMES[ord(ch) - ord("0")]
+        return _lookup_unicode_glyph(
+            f"MATHEMATICAL {style_name} DIGIT {digit_name}",
+            f"{style_name} DIGIT {digit_name}",
+        )
+
+    if ch.isalpha():
+        case = "CAPITAL" if ch.isupper() else "SMALL"
+        base = ch.upper()
+        glyph = _lookup_unicode_glyph(
+            f"MATHEMATICAL {style_name} {case} {base}",
+            f"{style_name} {case} {base}",
+        )
+        if glyph is not None:
+            return glyph
+        if ch.isupper():
+            return _UNICODE_STYLE_LETTER_ALIASES.get(style, {}).get(base)
+
+    return None
+
+
+def format_unicode_style(text: str, style: str, include_letters: bool = False) -> str:
     if style == "normal":
         return text
-    return to_fancy_number(text)
+
+    translation = {}
+    charset = string.digits + (string.ascii_letters if include_letters else "")
+    for ch in charset:
+        glyph = _style_char(style, ch)
+        if glyph is not None:
+            translation[ord(ch)] = glyph
+    return text.translate(translation)
 
 # --- Telegram name helpers ---
 def clamp_name(s: str, max_len: int = 64) -> str:
@@ -192,8 +317,8 @@ def main():
     base_name = os.environ.get("BASE_NAME", "").strip()
     tz_name = os.environ.get("TZ_NAME", "Australia/Sydney").strip()
     suffix_time_fmt = os.environ.get("TIME_FORMAT", "{time}").strip()  # default "{time}"
-    time_style = normalize_digit_style(os.environ.get("TIME_STYLE", "fancy"), "TIME_STYLE")
-    temp_style = normalize_digit_style(os.environ.get("TEMP_STYLE", "fancy"), "TEMP_STYLE")
+    time_style = normalize_unicode_style(os.environ.get("TIME_STYLE", "fancy"), "TIME_STYLE")
+    temp_style = normalize_unicode_style(os.environ.get("TEMP_STYLE", "fancy"), "TEMP_STYLE")
 
     # Scheduling
     ahead_seconds = float(os.environ.get("AHEAD_SECONDS", "0"))
@@ -235,7 +360,7 @@ def main():
                 if weather_enabled and now_ts >= next_weather_fetch_ts:
                     try:
                         emoji, temp_c = fetch_weather_qweather()
-                        weather_text = f"{emoji}{format_digits(str(temp_c), temp_style)}°𝐂"
+                        weather_text = f"{emoji}{format_unicode_style(f'{temp_c}°C', temp_style, include_letters=True)}"
                         print(f"[WEATHER] Updated -> {weather_text}")
                     except Exception as e:
                         # Keep previous weather so rename flow is not blocked.
@@ -248,7 +373,7 @@ def main():
 
                 if target_hhmm != last_target_hhmm:
                     plain_time = suffix_time_fmt.format(time=target_hhmm).strip()
-                    time_part = format_digits(plain_time, time_style)
+                    time_part = format_unicode_style(plain_time, time_style, include_letters=True)
                     # Compose final name, e.g. "BaseName 22:15 ☁️25℃".
                     name_parts = [base_name, time_part]
 

@@ -13,7 +13,7 @@ It runs continuously in Docker.
 ## Features
 - Minute-level name update with configurable schedule offsets
 - QWeather support with dynamic JWT generation (recommended)
-- Independent fancy/normal digit style for time and temperature
+- Independent Unicode digit/letter style for time and temperature
 - Fallback auth support: static JWT or API key
 - Simple `.env`-driven configuration
 - Prebuilt Docker image on GHCR
@@ -113,8 +113,8 @@ Required app variables used by current code:
 | `BASE_NAME` | Yes | Base display name |
 | `TZ_NAME` | No | Timezone, default `Australia/Sydney` |
 | `TIME_FORMAT` | No | Time template, default `{time}` |
-| `TIME_STYLE` | No | Time digit style: `fancy` or `normal`, default `fancy` |
-| `TEMP_STYLE` | No | Temperature digit style: `fancy` or `normal`, default `fancy` |
+| `TIME_STYLE` | No | Time style: `normal`, `bold` (`fancy` alias), `italic`, `bold_italic`, `script`, `bold_script`, `fraktur`, `bold_fraktur`, `double_struck`, `sans`, `sans_italic`, `sans_bold`, `sans_bold_italic`, `monospace`; hyphen/space aliases like `sans-serif-bold` or `sans serif bold` are accepted; styles without digit glyphs keep digits plain |
+| `TEMP_STYLE` | No | Temperature style for digits and `C`; same style set as `TIME_STYLE`, default `fancy` |
 | `AHEAD_SECONDS` | No | Update lead offset |
 | `GUARD_SECONDS` | No | Schedule guard offset |
 | `WEATHER_ENABLED` | No | Weather switch, default `1` |
@@ -138,10 +138,10 @@ Path B:
 Path C:
 - `QW_API_KEY`
 
-Digit style examples:
+Style examples:
 - `TIME_STYLE=fancy` and `TEMP_STYLE=fancy`: `Alice 𝟏𝟑:𝟓𝟏 ☀️𝟐𝟎°𝐂`
-- `TIME_STYLE=normal` and `TEMP_STYLE=fancy`: `Alice 13:51 ☀️𝟐𝟎°𝐂`
-- `TIME_STYLE=fancy` and `TEMP_STYLE=normal`: `Alice 𝟏𝟑:𝟓𝟏 ☀️20°𝐂`
+- `TIME_STYLE=double_struck` and `TEMP_STYLE=double_struck`: `Alice 𝟙𝟛:𝟝𝟙 ☀️𝟚𝟘°ℂ`
+- `TIME_STYLE=sans_bold` and `TEMP_STYLE=fraktur`: `Alice 𝟭𝟯:𝟱𝟭 ☀️20°ℭ`
 
 ## Troubleshooting
 - `Need dynamic JWT envs ... or QW_JWT, or QW_API_KEY`
