@@ -140,19 +140,28 @@ Path C:
 
 ## Style preview
 
-A few examples of how the name can look:
+Full preview of the supported styles using the sample name `Alice 13:51 ☀️20°C`:
 
 ```text
-Alice 𝟏𝟑:𝟓𝟏 ☀️𝟐𝟎°𝐂
-Alice 𝟙𝟛:𝟝𝟙 ☀️𝟚𝟘°ℂ
-Alice 𝟭𝟯:𝟱𝟭 ☀️20°ℭ
-Alice 13:51 ☀️20°C
+normal            | Alice 13:51 ☀️20°C
+bold              | Alice 𝟏𝟑:𝟓𝟏 ☀️𝟐𝟎°𝐂
+italic            | Alice 13:51 ☀️20°𝐶
+bold_italic       | Alice 13:51 ☀️20°𝑪
+script            | Alice 13:51 ☀️20°𝒞
+bold_script       | Alice 13:51 ☀️20°𝓒
+fraktur           | Alice 13:51 ☀️20°ℭ
+bold_fraktur      | Alice 13:51 ☀️20°𝕮
+double_struck     | Alice 𝟙𝟛:𝟝𝟙 ☀️𝟚𝟘°ℂ
+sans              | Alice 𝟣𝟥:𝟧𝟣 ☀️𝟤𝟢°𝖢
+sans_italic       | Alice 13:51 ☀️20°𝘊
+sans_bold         | Alice 𝟭𝟯:𝟱𝟭 ☀️𝟮𝟬°𝗖
+sans_bold_italic  | Alice 13:51 ☀️20°𝘾
+monospace         | Alice 𝟷𝟹:𝟻𝟷 ☀️𝟸𝟶°𝙲
 ```
 
-Style examples:
-- `TIME_STYLE=fancy` and `TEMP_STYLE=fancy`: `Alice 𝟏𝟑:𝟓𝟏 ☀️𝟐𝟎°𝐂`
-- `TIME_STYLE=double_struck` and `TEMP_STYLE=double_struck`: `Alice 𝟙𝟛:𝟝𝟙 ☀️𝟚𝟘°ℂ`
-- `TIME_STYLE=sans_bold` and `TEMP_STYLE=fraktur`: `Alice 𝟭𝟯:𝟱𝟭 ☀️20°ℭ`
+Notes:
+- `fancy` is an alias of `bold`.
+- Some Unicode styles do not provide digit glyphs, so the time and temperature numbers stay plain while the `C` changes.
 
 ## Troubleshooting
 - `Need dynamic JWT envs ... or QW_JWT, or QW_API_KEY`

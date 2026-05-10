@@ -125,19 +125,28 @@ QWeather 鉴权三选一：
 
 ## 样式预览
 
-下面是几种显示效果示例：
+使用示例名 `Alice 13:51 ☀️20°C` 的完整预览：
 
 ```text
-Alice 𝟏𝟑:𝟓𝟏 ☀️𝟐𝟎°𝐂
-Alice 𝟙𝟛:𝟝𝟙 ☀️𝟚𝟘°ℂ
-Alice 𝟭𝟯:𝟱𝟭 ☀️20°ℭ
-Alice 13:51 ☀️20°C
+normal            | Alice 13:51 ☀️20°C
+bold              | Alice 𝟏𝟑:𝟓𝟏 ☀️𝟐𝟎°𝐂
+italic            | Alice 13:51 ☀️20°𝐶
+bold_italic       | Alice 13:51 ☀️20°𝑪
+script            | Alice 13:51 ☀️20°𝒞
+bold_script       | Alice 13:51 ☀️20°𝓒
+fraktur           | Alice 13:51 ☀️20°ℭ
+bold_fraktur      | Alice 13:51 ☀️20°𝕮
+double_struck     | Alice 𝟙𝟛:𝟝𝟙 ☀️𝟚𝟘°ℂ
+sans              | Alice 𝟣𝟥:𝟧𝟣 ☀️𝟤𝟢°𝖢
+sans_italic       | Alice 13:51 ☀️20°𝘊
+sans_bold         | Alice 𝟭𝟯:𝟱𝟭 ☀️𝟮𝟬°𝗖
+sans_bold_italic  | Alice 13:51 ☀️20°𝘾
+monospace         | Alice 𝟷𝟹:𝟻𝟷 ☀️𝟸𝟶°𝙲
 ```
 
-样式示例：
-- `TIME_STYLE=fancy` 且 `TEMP_STYLE=fancy`：`Alice 𝟏𝟑:𝟓𝟏 ☀️𝟐𝟎°𝐂`
-- `TIME_STYLE=double_struck` 且 `TEMP_STYLE=double_struck`：`Alice 𝟙𝟛:𝟝𝟙 ☀️𝟚𝟘°ℂ`
-- `TIME_STYLE=sans_bold` 且 `TEMP_STYLE=fraktur`：`Alice 𝟭𝟯:𝟱𝟭 ☀️20°ℭ`
+说明：
+- `fancy` 是 `bold` 的兼容别名。
+- 某些 Unicode 样式没有数字字形，因此时间和温度数字会保持普通样式，只替换 `C`。
 
 ## 常见问题
 - `Need dynamic JWT envs ... or QW_JWT, or QW_API_KEY`
