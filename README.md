@@ -138,6 +138,17 @@ Path B:
 Path C:
 - `QW_API_KEY`
 
+## Style preview
+
+A few examples of how the name can look:
+
+```text
+Alice 𝟏𝟑:𝟓𝟏 ☀️𝟐𝟎°𝐂
+Alice 𝟙𝟛:𝟝𝟙 ☀️𝟚𝟘°ℂ
+Alice 𝟭𝟯:𝟱𝟭 ☀️20°ℭ
+Alice 13:51 ☀️20°C
+```
+
 Style examples:
 - `TIME_STYLE=fancy` and `TEMP_STYLE=fancy`: `Alice 𝟏𝟑:𝟓𝟏 ☀️𝟐𝟎°𝐂`
 - `TIME_STYLE=double_struck` and `TEMP_STYLE=double_struck`: `Alice 𝟙𝟛:𝟝𝟙 ☀️𝟚𝟘°ℂ`

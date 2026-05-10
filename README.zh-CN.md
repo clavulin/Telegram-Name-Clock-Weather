@@ -123,6 +123,17 @@ QWeather 鉴权三选一：
 方案 C：
 - `QW_API_KEY`
 
+## 样式预览
+
+下面是几种显示效果示例：
+
+```text
+Alice 𝟏𝟑:𝟓𝟏 ☀️𝟐𝟎°𝐂
+Alice 𝟙𝟛:𝟝𝟙 ☀️𝟚𝟘°ℂ
+Alice 𝟭𝟯:𝟱𝟭 ☀️20°ℭ
+Alice 13:51 ☀️20°C
+```
+
 样式示例：
 - `TIME_STYLE=fancy` 且 `TEMP_STYLE=fancy`：`Alice 𝟏𝟑:𝟓𝟏 ☀️𝟐𝟎°𝐂`
 - `TIME_STYLE=double_struck` 且 `TEMP_STYLE=double_struck`：`Alice 𝟙𝟛:𝟝𝟙 ☀️𝟚𝟘°ℂ`
