@@ -51,6 +51,20 @@ FANCY_DIGITS = {
 def to_fancy_number(text: str) -> str:
     return "".join(FANCY_DIGITS.get(ch, ch) for ch in text)
 
+
+def normalize_digit_style(value: str, env_name: str) -> str:
+    style = (value or "fancy").strip().lower()
+    if style in ("fancy", "normal"):
+        return style
+    print(f"[WARN] Invalid {env_name}={value!r}; using fancy")
+    return "fancy"
+
+
+def format_digits(text: str, style: str) -> str:
+    if style == "normal":
+        return text
+    return to_fancy_number(text)
+
 # --- Telegram name helpers ---
 def clamp_name(s: str, max_len: int = 64) -> str:
     return s[:max_len]
@@ -178,6 +192,8 @@ def main():
     base_name = os.environ.get("BASE_NAME", "").strip()
     tz_name = os.environ.get("TZ_NAME", "Australia/Sydney").strip()
     suffix_time_fmt = os.environ.get("TIME_FORMAT", "{time}").strip()  # default "{time}"
+    time_style = normalize_digit_style(os.environ.get("TIME_STYLE", "fancy"), "TIME_STYLE")
+    temp_style = normalize_digit_style(os.environ.get("TEMP_STYLE", "fancy"), "TEMP_STYLE")
 
     # Scheduling
     ahead_seconds = float(os.environ.get("AHEAD_SECONDS", "0"))
@@ -202,7 +218,10 @@ def main():
     with client:
         me = client.get_me()
         print(f"[INIT] Current Telegram first_name -> {me.first_name}")
-        print(f"[INIT] TZ_NAME={tz_name} AHEAD_SECONDS={ahead_seconds} WEATHER_ENABLED={weather_enabled}")
+        print(
+            f"[INIT] TZ_NAME={tz_name} AHEAD_SECONDS={ahead_seconds} "
+            f"TIME_STYLE={time_style} TEMP_STYLE={temp_style} WEATHER_ENABLED={weather_enabled}"
+        )
         if weather_enabled:
             print(
                 f"[INIT] QW_HOST={os.environ.get('QW_HOST')} "
@@ -216,7 +235,7 @@ def main():
                 if weather_enabled and now_ts >= next_weather_fetch_ts:
                     try:
                         emoji, temp_c = fetch_weather_qweather()
-                        weather_text = f"{emoji}{to_fancy_number(str(temp_c))}°𝐂"
+                        weather_text = f"{emoji}{format_digits(str(temp_c), temp_style)}°𝐂"
                         print(f"[WEATHER] Updated -> {weather_text}")
                     except Exception as e:
                         # Keep previous weather so rename flow is not blocked.
@@ -229,7 +248,7 @@ def main():
 
                 if target_hhmm != last_target_hhmm:
                     plain_time = suffix_time_fmt.format(time=target_hhmm).strip()
-                    time_part = to_fancy_number(plain_time)
+                    time_part = format_digits(plain_time, time_style)
                     # Compose final name, e.g. "BaseName 22:15 ☁️25℃".
                     name_parts = [base_name, time_part]
 
