@@ -195,9 +195,13 @@ def clamp_name(s: str, max_len: int = 64) -> str:
     return s[:max_len]
 
 
-# --- Weather helpers (QWeather / HeWeather) ---
+# --- Weather helpers (QWeather / Open-Meteo) ---
 def _b64url(data: bytes) -> str:
     return base64.urlsafe_b64encode(data).rstrip(b"=").decode("ascii")
+
+
+def _env(name: str, default: str = "") -> str:
+    return os.environ.get(name, default).strip()
 
 
 def build_qweather_jwt() -> str:
@@ -262,6 +266,59 @@ def qweather_emoji(icon_code: str) -> str:
     return "☁️"
 
 
+def open_meteo_emoji(weather_code: int, is_day: Optional[int] = None) -> str:
+    """
+    Emoji mapping for Open-Meteo WMO weather codes.
+    """
+    if weather_code == 0:
+        return "☀️" if is_day != 0 else "🌙"
+
+    if weather_code in (1, 2):
+        return "🌤️" if is_day != 0 else "☁️"
+    if weather_code == 3:
+        return "☁️"
+
+    if weather_code in (45, 48):
+        return "🌫️"
+
+    if weather_code in (51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82):
+        return "🌧️"
+
+    if weather_code in (71, 73, 75, 77, 85, 86):
+        return "🌨️"
+
+    if weather_code in (95, 96, 99):
+        return "⛈️"
+
+    return "☁️"
+
+
+def qweather_auth_configured() -> bool:
+    return bool(_env("QW_API_KEY") or _env("QW_JWT") or qweather_dynamic_auth_configured())
+
+
+def qweather_dynamic_auth_configured() -> bool:
+    return bool(
+        _env("QW_PROJECT_ID")
+        and _env("QW_KEY_ID")
+        and _env("QW_PRIVATE_KEY")
+    )
+
+
+def parse_lon_lat(value: str) -> tuple[float, float]:
+    parts = [part.strip() for part in value.split(",")]
+    if len(parts) != 2:
+        raise ValueError("expected lon,lat")
+
+    lon = float(parts[0])
+    lat = float(parts[1])
+
+    if not -180 <= lon <= 180 or not -90 <= lat <= 90:
+        raise ValueError("longitude/latitude out of range")
+
+    return lon, lat
+
+
 def fetch_weather_qweather(timeout: float = 6.0) -> tuple[str, int]:
     """
     Returns: (emoji, temp_c_int)
@@ -272,7 +329,7 @@ def fetch_weather_qweather(timeout: float = 6.0) -> tuple[str, int]:
     host = os.environ["QW_HOST"].strip()          # Dedicated API host (without https://)
     location = os.environ["QW_LOCATION"].strip()  # lon,lat or LocationID
 
-    jwt_token = build_qweather_jwt() if os.environ.get("QW_PRIVATE_KEY", "").strip() else os.environ.get("QW_JWT", "").strip()
+    jwt_token = build_qweather_jwt() if qweather_dynamic_auth_configured() else os.environ.get("QW_JWT", "").strip()
     api_key = os.environ.get("QW_API_KEY", "").strip()
     if not jwt_token and not api_key:
         raise RuntimeError("Need dynamic JWT envs (QW_PROJECT_ID/QW_KEY_ID/QW_PRIVATE_KEY), or QW_JWT, or QW_API_KEY")
@@ -306,6 +363,73 @@ def fetch_weather_qweather(timeout: float = 6.0) -> tuple[str, int]:
 
     emoji = qweather_emoji(str(icon))
     return emoji, int(round(float(temp)))
+
+
+def open_meteo_coordinates() -> tuple[float, float]:
+    lat_text = _env("OPEN_METEO_LATITUDE")
+    lon_text = _env("OPEN_METEO_LONGITUDE")
+    if bool(lat_text) != bool(lon_text):
+        raise ValueError("OPEN_METEO_LATITUDE and OPEN_METEO_LONGITUDE must be set together")
+
+    if lat_text and lon_text:
+        lat = float(lat_text)
+        lon = float(lon_text)
+    else:
+        lon, lat = parse_lon_lat(_env("QW_LOCATION"))
+
+    if not -90 <= lat <= 90 or not -180 <= lon <= 180:
+        raise ValueError("Open-Meteo latitude/longitude out of range")
+
+    return lat, lon
+
+
+def fetch_weather_open_meteo(timeout: float = 6.0) -> tuple[str, int]:
+    """
+    Returns: (emoji, temp_c_int)
+
+    Open-Meteo forecast API does not require an API key for non-commercial use.
+    It needs latitude/longitude, so QW_LOCATION must be lon,lat when reused here.
+    """
+    lat, lon = open_meteo_coordinates()
+    params = {
+        "latitude": lat,
+        "longitude": lon,
+        "current": "temperature_2m,weather_code,is_day",
+        "temperature_unit": "celsius",
+        "timezone": "auto",
+    }
+
+    r = requests.get("https://api.open-meteo.com/v1/forecast", params=params, timeout=timeout)
+    r.raise_for_status()
+    data = r.json()
+
+    current = data.get("current") or {}
+    temp = current.get("temperature_2m")
+    weather_code = current.get("weather_code")
+    if temp is None or weather_code is None:
+        raise RuntimeError("Open-Meteo response missing current.temperature_2m/current.weather_code")
+
+    emoji = open_meteo_emoji(int(weather_code), current.get("is_day"))
+    return emoji, int(round(float(temp)))
+
+
+def fetch_weather(timeout: float = 6.0) -> tuple[str, int]:
+    if qweather_auth_configured():
+        try:
+            return fetch_weather_qweather(timeout=timeout)
+        except Exception as e:
+            try:
+                emoji, temp_c = fetch_weather_open_meteo(timeout=timeout)
+                print(f"[WEATHER_WARN] QWeather failed ({type(e).__name__}: {e}); used Open-Meteo fallback")
+                return emoji, temp_c
+            except Exception as fallback_e:
+                raise RuntimeError(
+                    f"QWeather failed ({type(e).__name__}: {e}); "
+                    f"Open-Meteo fallback also failed ({type(fallback_e).__name__}: {fallback_e})"
+                ) from fallback_e
+
+    return fetch_weather_open_meteo(timeout=timeout)
+
 
 def main():
     # Telegram auth
@@ -351,6 +475,8 @@ def main():
             print(
                 f"[INIT] QW_HOST={os.environ.get('QW_HOST')} "
                 f"QW_LOCATION={os.environ.get('QW_LOCATION')} "
+                f"OPEN_METEO_LATITUDE={os.environ.get('OPEN_METEO_LATITUDE')} "
+                f"OPEN_METEO_LONGITUDE={os.environ.get('OPEN_METEO_LONGITUDE')} "
                 f"WEATHER_REFRESH_SECONDS={weather_refresh}"
             )
         while True:
@@ -359,7 +485,7 @@ def main():
                 now_ts = time.time()
                 if weather_enabled and now_ts >= next_weather_fetch_ts:
                     try:
-                        emoji, temp_c = fetch_weather_qweather()
+                        emoji, temp_c = fetch_weather()
                         weather_text = f"{emoji}{format_unicode_style(f'{temp_c}°C', temp_style, include_letters=True)}"
                         print(f"[WEATHER] Updated -> {weather_text}")
                     except Exception as e:

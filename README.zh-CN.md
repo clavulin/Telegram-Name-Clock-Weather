@@ -1,18 +1,19 @@
 # Telegram Name Clock Weather
 
-[English README](README.md)
+[English README](README.en.md)
 
 ## 项目简介
 `Telegram Name Clock Weather` 会持续更新 Telegram 的 first name，内容包括：
 - 基础昵称
 - 当前时间（按时区）
-- [QWeather](https://dev.qweather.com/) 实时天气
+- [QWeather](https://dev.qweather.com/) 实时天气，或 Open-Meteo 兜底
 
 项目通过 Docker 持续运行。
 
 ## 功能
 - 按分钟更新昵称，支持调度提前量与安全余量
 - 支持 QWeather 动态 JWT（推荐）
+- 未配置 QWeather 鉴权时，自动使用免费、免注册的 Open-Meteo 兜底
 - 时间和温度可分别选择多种 Unicode 数字/字母样式
 - 兼容静态 JWT 或 API Key
 - 通过 `.env` 简单配置
@@ -25,7 +26,7 @@
 ## 运行要求
 - Docker
 - Telegram `API_ID`、`API_HASH`、`TG_STRING_SESSION`
-- [QWeather](https://dev.qweather.com/) 鉴权、专属 host 与位置参数
+- 天气坐标，以及可选的 [QWeather](https://dev.qweather.com/) 鉴权和专属 host
 
 ## 快速开始（Docker Compose + GHCR 镜像）
 1. 克隆到本地。
@@ -104,10 +105,12 @@ with TelegramClient(StringSession(), api_id, api_hash) as client:
 | `GUARD_SECONDS` | 否 | 调度安全余量（秒） |
 | `WEATHER_ENABLED` | 否 | 天气开关，默认 `1` |
 | `WEATHER_REFRESH_SECONDS` | 否 | 天气刷新间隔 |
-| `QW_HOST` | 开天气时必填 | QWeather 专属 API Host |
-| `QW_LOCATION` | 开天气时必填 | `经度,纬度` 或 LocationID |
+| `QW_HOST` | 使用 QWeather 时必填 | QWeather 专属 API Host |
+| `QW_LOCATION` | 使用 QWeather 时必填；未单独设置 Open-Meteo 坐标时也可用于兜底 | `经度,纬度` 或 QWeather LocationID；Open-Meteo 兜底只能复用 `经度,纬度` |
 | `QW_LANG` | 否 | 天气语言，默认 `zh` |
 | `QW_UNIT` | 否 | 计量单位，默认 `m` |
+| `OPEN_METEO_LATITUDE` | 否 | Open-Meteo 兜底纬度 |
+| `OPEN_METEO_LONGITUDE` | 否 | Open-Meteo 兜底经度 |
 
 QWeather 鉴权三选一：
 
@@ -122,6 +125,11 @@ QWeather 鉴权三选一：
 
 方案 C：
 - `QW_API_KEY`
+
+如果不配置任何 QWeather 鉴权变量，程序会自动使用
+[Open-Meteo](https://open-meteo.com/) 作为免费、免注册的兜底天气源。此时需要提供
+`OPEN_METEO_LATITUDE` + `OPEN_METEO_LONGITUDE`，或者把 `QW_LOCATION` 写成
+`经度,纬度`。QWeather LocationID 不能被兜底源自动转换。
 
 ## 样式预览
 
@@ -149,8 +157,8 @@ monospace         | Alice 𝟷𝟹:𝟻𝟷 ☀️𝟸𝟶°𝙲
 - 某些 Unicode 样式没有数字字形，因此时间和温度数字会保持普通样式，只替换 `C`。
 
 ## 常见问题
-- `Need dynamic JWT envs ... or QW_JWT, or QW_API_KEY`
-  - 未配置鉴权参数，请补全动态 JWT 变量，或改用静态 JWT/API Key。
+- `expected lon,lat`
+  - 未配置 QWeather 鉴权，Open-Meteo 兜底需要坐标。请设置 `OPEN_METEO_LATITUDE` + `OPEN_METEO_LONGITUDE`，或使用 `QW_LOCATION=经度,纬度`。
 - QWeather 返回 `401`
   - 检查 `QW_HOST`、项目ID/密钥ID、私钥与 JWT 有效期。
 - Telegram 出现 FloodWait
